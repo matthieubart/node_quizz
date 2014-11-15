@@ -1,4 +1,5 @@
 var config = require('./config'),//Fichier de config config.js
+    twig = require("twig"),
     app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
@@ -17,19 +18,55 @@ var scores = {};
 var numeroQuestion=1;
 var idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);//fonction définie plus bas
 
+var rejoindreLeJeu = true;
+
+/////////
+//ROUTES 
+
+//Jeu : Matthieu
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/index.html');
+});
+
+//Résultats : Romain
+app.get('/resultats/scores', function(req, res){
+    MongoClient.connect(url, function(err, db) {
+        findScores(db, function(scores) {
+            res.render("resultats_scores.twig", {scores:scores});
+            db.close();
+        });
+    });
+});
+
+
+app.get('/resultats/questions', function(req, res){
+    MongoClient.connect(url, function(err, db) {
+        findIdsQuestions(db, function(questions_ids) {
+            findIntulesQuestions(db, questions_ids, function(questions_posees){
+                res.render("resultats_questions.twig", {questions_posees:questions_posees});
+                db.close();
+            });
+        });
+    });
+});
+
+//////
+//JEU
+
 //Connexion MongoDB
 MongoClient.connect(url, function(err, db) {
-    //Pour la première partie, insertion des ids des questions
-    insertIdQuestion(db, idsQuestions);
-    // Chargement de la page index.html
-    app.get('/', function (req, res) {
-      res.sendFile(__dirname + '/index.html');
-    });
-
     io.sockets.on('connection', function (socket, pseudo) {
         //Si le client se déconnecte, on efface ses données
         socket.on('disconnect', function () {
             pseudo = pseudos[socket.id];
+            //Enregistrement du score : pseudo, score, partie finie ou non
+            if(pseudo != undefined){
+                if(numeroQuestion==11){
+                    insertScoreJoueur(db, pseudo, scores[socket.id+";"+pseudo], true);
+                }else{
+                    insertScoreJoueur(db, pseudo, scores[socket.id+";"+pseudo], false);
+                }
+            }
             delete scores[socket.id+";"+pseudo];
             delete pseudos[socket.id];
             if(Object.keys(pseudos).length==1){
@@ -38,7 +75,8 @@ MongoClient.connect(url, function(err, db) {
             if(Object.keys(pseudos).length==0){
                 numeroQuestion=1;
                 idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);
-                insertIdQuestion(db, idsQuestions);
+                rejoindreLeJeu = true;
+                //insertIdQuestion(db, idsQuestions);
             }
         });
 
@@ -62,6 +100,11 @@ MongoClient.connect(url, function(err, db) {
         });
 
         socket.on('debut_partie', function(){
+            //Pour la première partie, insertion des ids des questions
+            if(rejoindreLeJeu){
+                insertIdQuestion(db, idsQuestions);
+                rejoindreLeJeu=false;
+            }
             socket.emit("decompte");
             //Cherche la question dans la base de données
             findQuestion(db, idsQuestions[numeroQuestion], function(resultat) {//requete pour la question
@@ -94,7 +137,7 @@ MongoClient.connect(url, function(err, db) {
                     reponse = ent.encode(reponse).trim();
                     bonneReponse = ent.encode(resultat.reponse).trim();
                 }
-                if(reponse==bonneReponse){
+                if(reponse==bonneReponse && reponse != ""){
                     //secondsToReset=10;
                     io.sockets.emit('bonne_reponse', pseudo);
                     scores[socket.id+";"+pseudo]+=5;
@@ -126,6 +169,39 @@ server.listen(8080);
 //////////////////////
 //Fonctions 
 
+/////
+//MongoDB
+
+//Récupérer les scores :
+var findScores = function(db, callback) {
+    var collection = db.collection('scores_joueurs');
+    collection.find({}, {'_id':0}).toArray(function(err, scores) {
+        callback(scores);
+    });     
+}
+
+//Récupérer les ids des questions posées :
+var findIdsQuestions = function(db, callback) {
+    var collection = db.collection('questions_posees');
+    collection.find({}, {'_id':0}).toArray(function(err, questions_posees) {//N'afficher que les id_questions
+        callback(questions_posees);
+    });     
+}
+
+//Récupérer les intitulés des questions posées
+var findIntulesQuestions = function(db, questions_ids, callback){
+    var questions = new Array();
+    var cpt = 0;
+    for(var cle in questions_ids){
+        questions[cpt] = questions_ids[cle]['id_questions_posees'];
+        cpt++;
+    }
+    var collection = db.collection('questions');
+    collection.find({ 'id_questions' : { $in : questions }}, {'_id':0, 'reponse':0}).toArray(function(err, questions_posees) {//N'afficher que les id_questions
+        callback(questions_posees);
+    });
+}
+
 //Récupérer la question
 var findQuestion = function(db, idQuestion ,callback) {
     var collection = db.collection('questions');
@@ -142,10 +218,29 @@ var insertIdQuestion = function(db, idsQuestions) {
     for(i=1;i<11;i++){
         question = {id_questions_posees:idsQuestions[i]};
         collection.insert(question, function(err, records) {
-            console.log("Record added as "+records[0]._id);
+            console.log("Enregistré "+records[0]._id);
         }); 
     } 
 }
+
+//Inséré les scores
+var insertScoreJoueur = function(db, pseudo, score, partieFinie){
+    var collection = db.collection('scores_joueurs');
+    console.log(score);
+    console.log(pseudo);
+    if(partieFinie){
+        scoreAInserer = {pseudo:pseudo,score:score, partie_finie:true};
+    }else{
+        scoreAInserer = {pseudo:pseudo,score:score, partie_finie:false};
+    }
+    collection.insert(scoreAInserer, function(err, records) {
+            console.log("Enregistré "+records[0]._id);
+    }); 
+} 
+
+
+/////
+//Général
 
 //Généré un tableau de nombres aléatoires entre min et max 
 function genererIdsQuestions(min, max) {

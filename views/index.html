@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <title>Node Quizz | {% block title %}{% endblock %}</title>
+        {% endblock %}
+    </head>
+    <body>
+        {% block contenu %}{% endblock %}
+        {% block script %}
+        <!--<script src="/socket.io/socket.io.js"></script>-->
+        {% endblock %}
+    </body>
+</html>

@@ -62,6 +62,9 @@
                 <input type="text" name="pseudonyme" id="pseudonyme" placeholder="Votre pseudonyme..." size="50" autofocus />
                 <input type="submit" id="envoi_pseudonyme" value="Envoyer" />
             </form>
+
+            <a href="/resultats/questions">Resultats questions</a><br />
+            <a href="/resultats/scores">Resultats scores</a>
         </div>
 
         <div id="quizz">
@@ -138,7 +141,7 @@
                 });
 
                 socket.on('decompte', function(){
-                    temps_decompte = 15 ;
+                    temps_decompte = 20 ;
                     var x ;
                     var id_question_envoye = false;
                     function decompte()
