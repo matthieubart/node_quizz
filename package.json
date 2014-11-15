@@ -1,7 +1,7 @@
 {
   "name": "quizz-node",
   "version": "1.0.0",
-  "subdomain": "node_quizz",
+  "subdomain": "node_quizz_matthieu",
   "description": "Quizz node.js",
   "main": "app.js",
   "scripts": {
