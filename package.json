@@ -1,0 +1,23 @@
+{
+  "name": "quizz-node",
+  "version": "1.0.0",
+  "description": "Quizz node.js",
+  "main": "app.js",
+  "scripts": {
+    "start": "node appp.js"
+  },
+  "dependencies": {
+    "ent": "^2.0.0",
+    "express": "^4.10.2",
+    "mongodb": "^1.4.19",
+    "socket.io": "^1.2.0"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matthieubart/node_quizz"
+  }
+}
+
