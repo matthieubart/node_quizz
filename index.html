@@ -73,6 +73,9 @@
                 
             </section>
             <section id="infos">
+                <div id="decompte-debut">
+                    
+                </div>
                 <div id="decompte">
                     
                 </div>
@@ -109,6 +112,8 @@
 
                 socket.on('attente', function(){
                     $("#attente").html("Attente d'un autre joueur.");
+                    $("#decompte-debut").html("");
+                    $("#decompte").html("");
                     $("#formulaire_reponse").css("display", "none");
                 });
 
@@ -121,14 +126,16 @@
                     function decompte()
                     {
                         if(cpt>=0){
-                            $("#decompte").html("<h1>"+cpt+"</h1>");
+                            $("#decompte").css("display", "none");
+                            $("#decompte-debut").html("<h1>"+cpt+"</h1>");
                             cpt-- ;
                             x = setTimeout(decompte,1000) ;
                         }
                         else{
                             clearTimeout(x) ;
                             //Les secondes sont passés
-                            $("#decompte").html("");
+                            $("#decompte-debut").html("");
+                            $("#decompte").css("display", "block");
                             socket.emit("debut_partie");
                         }
                     }
@@ -144,6 +151,7 @@
                 });*/
 
                 socket.on('decompte', function (data) {
+                    console.log(data);
                     $('#decompte').html("<h1>"+data.countdown+"</h1>");
                 });
 
@@ -173,11 +181,8 @@
                     }else{
                         message = "Le vainqueur est "+vainqueur;
                     }
-                    //Réinitialise tout
-                    //$("#decompte, #gagnants, #reponsesproposees, #questions").html("");
-                    //$("#formulaire_reponse").css("display", "none");
-                    $("#questions").html(message+"<br />");
-                    //$("#questions").append("<a href='#' id='rejouer'>Refaire une partie</a>")
+                    alert(message);
+                    window.location.reload();
                 });
 
                 socket.on('scores', function(scores){
