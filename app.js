@@ -19,6 +19,8 @@ var idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);//fonction définie 
 
 //Connexion MongoDB
 MongoClient.connect(url, function(err, db) {
+    //Pour la première partie, insertion des ids des questions
+    insertIdQuestion(db, idsQuestions);
     // Chargement de la page index.html
     app.get('/', function (req, res) {
       res.sendFile(__dirname + '/index.html');
@@ -36,6 +38,7 @@ MongoClient.connect(url, function(err, db) {
             if(Object.keys(pseudos).length==0){
                 numeroQuestion=1;
                 idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);
+                insertIdQuestion(db, idsQuestions);
             }
         });
 
@@ -133,12 +136,15 @@ var findQuestion = function(db, idQuestion ,callback) {
 }
 
 //Insérer les ids des questions posées
-var insertIdQuestion = function(db, idQuestion ,callback) {
+var insertIdQuestion = function(db, idsQuestions) {
     var collection = db.collection('questions_posees');
-    collection.find({'id_questions':idQuestion}).toArray(function(err, resultat) {
-        //console.log(err);
-        callback(resultat[0]);
-    });     
+    var question;
+    for(i=1;i<11;i++){
+        question = {id_questions_posees:idsQuestions[i]};
+        collection.insert(question, function(err, records) {
+            console.log("Record added as "+records[0]._id);
+        }); 
+    } 
 }
 
 //Généré un tableau de nombres aléatoires entre min et max 
