@@ -1,11 +1,11 @@
 {
   "name": "quizz-node",
-  "version": "1.0.0",
+  "version": "1.0.0-1",
   "subdomain": "node_quizz_matthieu",
   "description": "Quizz node.js",
   "main": "app.js",
   "scripts": {
-    "start": "node appp.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "ent": "^2.0.0",
