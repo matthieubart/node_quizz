@@ -163,14 +163,6 @@
 
                 });
 
-/*                socket.on('deconnexion_joueur', function(){
-                    $("#attente").html("Un des joueurs s'est déconnecté.");
-                    if($("#questions").find("#rejouer").length!=0){
-                        $("#questions").html("");
-                    }
-                    $("#formulaire_reponse").css("display", "none");
-                });*/
-
                 socket.on('decompte', function (data) {
                     $('#decompte').html("<h1>"+data.countdown+"</h1>");
                 });
@@ -204,11 +196,6 @@
                     }
                     alert(message);
                     window.location.reload();
-                    //Réinitialise tout
-                    //$("#decompte, #gagnants, #reponsesproposees, #questions").html("");
-                    //$("#formulaire_reponse").css("display", "none");
-                    //$("#questions").html(message+"<br />");
-                    //$("#questions").append("<a href='#' id='rejouer'>Refaire une partie</a>")
                 });
 
                 socket.on('scores', function(scores){

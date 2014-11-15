@@ -1,4 +1,5 @@
-var app = require('express')(),
+var config = require('./config'),//Fichier de config config.js
+    app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     ent = require('ent'), // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
@@ -8,7 +9,7 @@ var app = require('express')(),
 const NB_QUESTIONS_BASE = 843;
 
 //Url de la base de données
-var url = "mongodb://dev-matthieu.bart:testdu59@mongodb1.alwaysdata.com/82444_quizz";
+var url = config.dbUrl;
 
 var pseudos = {};
 var scores = {};
@@ -125,6 +126,15 @@ server.listen(8080);
 //Récupérer la question
 var findQuestion = function(db, idQuestion ,callback) {
     var collection = db.collection('questions');
+    collection.find({'id_questions':idQuestion}).toArray(function(err, resultat) {
+        //console.log(err);
+        callback(resultat[0]);
+    });     
+}
+
+//Insérer les ids des questions posées
+var insertIdQuestion = function(db, idQuestion ,callback) {
+    var collection = db.collection('questions_posees');
     collection.find({'id_questions':idQuestion}).toArray(function(err, resultat) {
         //console.log(err);
         callback(resultat[0]);
