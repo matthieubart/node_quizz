@@ -73,9 +73,6 @@
                 
             </section>
             <section id="infos">
-                <div id="decompte-debut">
-                    
-                </div>
                 <div id="decompte">
                     
                 </div>
@@ -112,8 +109,6 @@
 
                 socket.on('attente', function(){
                     $("#attente").html("Attente d'un autre joueur.");
-                    $("#decompte-debut").html("");
-                    $("#decompte").html("");
                     $("#formulaire_reponse").css("display", "none");
                 });
 
@@ -121,25 +116,49 @@
                     $("#attente").html("");
                     $("#formulaire_reponse").css("display", "none");
 
-                    var cpt = 5 ;
+                    var cpt = 2 ;
                     var x ;
                     function decompte()
                     {
                         if(cpt>=0){
-                            $("#decompte").css("display", "none");
-                            $("#decompte-debut").html("<h1>"+cpt+"</h1>");
+                            $("#decompte").html("<h1>"+cpt+"</h1>");
                             cpt-- ;
                             x = setTimeout(decompte,1000) ;
                         }
                         else{
                             clearTimeout(x) ;
                             //Les secondes sont passés
-                            $("#decompte-debut").html("");
-                            $("#decompte").css("display", "block");
+                            $("#decompte").html("");
                             socket.emit("debut_partie");
                         }
                     }
                     decompte();
+                });
+
+                socket.on('decompte', function(){
+                    var cpt = 2 ;
+                    var x ;
+                    var id_question_envoye = false;
+                    function decompte()
+                    {
+                        if(cpt>=0){
+                            $("#decompte").html("<h1>"+cpt+"</h1>");
+                            cpt-- ;
+                            x = setTimeout(decompte,1000) ;
+                        }
+                        else{
+                            clearTimeout(x) ;
+                            //Les secondes sont passés
+                            $("#decompte").html("");
+                            if(!id_question_envoye){
+                                id_question = $("#questions").find("span").text();
+                                socket.emit("question_suivante", parseInt(id_question));
+                                id_question_envoye=true;
+                            }
+                        }
+                    }
+                    decompte();
+
                 });
 
 /*                socket.on('deconnexion_joueur', function(){
@@ -151,7 +170,6 @@
                 });*/
 
                 socket.on('decompte', function (data) {
-                    console.log(data);
                     $('#decompte').html("<h1>"+data.countdown+"</h1>");
                 });
 
@@ -183,6 +201,11 @@
                     }
                     alert(message);
                     window.location.reload();
+                    //Réinitialise tout
+                    //$("#decompte, #gagnants, #reponsesproposees, #questions").html("");
+                    //$("#formulaire_reponse").css("display", "none");
+                    //$("#questions").html(message+"<br />");
+                    //$("#questions").append("<a href='#' id='rejouer'>Refaire une partie</a>")
                 });
 
                 socket.on('scores', function(scores){

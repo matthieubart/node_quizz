@@ -16,13 +16,6 @@ var scores = {};
 var numeroQuestion=1;
 var idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);//fonction définie plus bas
 
-var countdown = {};
-for(i=2;i<11;i++){
-    countdown[i]=30;
-}
-
-var timer;
-
 //Connexion MongoDB
 MongoClient.connect(url, function(err, db) {
     // Chargement de la page index.html
@@ -31,46 +24,17 @@ MongoClient.connect(url, function(err, db) {
     });
 
     io.sockets.on('connection', function (socket, pseudo) {
-        //Compte à rebours questions
-        timer = setInterval(function() {
-            if(timer["_idleTimeout"]==1000 && Object.keys(pseudos).length>0){
-                if(Object.keys(pseudos).length>0){
-                    countdown[numeroQuestion] = countdown[numeroQuestion]-1;//2 joueurs donc 0.5 du temps pour chaque joueurs : 1 seconde
-                }
-                io.sockets.emit('decompte', { countdown: countdown[numeroQuestion] });
-                if(countdown[numeroQuestion]==0){
-                    numeroQuestion++;
-                    //Tester nombre de question pour savoir si la partie est finie
-                    if(numeroQuestion<11){
-                        findQuestion(db, idsQuestions[numeroQuestion],function(resultat) {//requete pour la question
-                            io.sockets.emit('question', "Question : "+numeroQuestion+"/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
-                        });
-                    //Afficher le gagnant
-                    }else{
-                        var vainqueur = chercherVainqueur(scores);//fonction chercherVainqueur définie plus bas
-                        io.sockets.emit('vainqueur', vainqueur);
-                    }
-                }
-            }else{
-                clearInterval(timer);
-            }
-        }, 1000);
-
         //Si le client se déconnecte, on efface ses données
         socket.on('disconnect', function () {
             pseudo = pseudos[socket.id];
             delete scores[socket.id+";"+pseudo];
             delete pseudos[socket.id];
             if(Object.keys(pseudos).length==1){
-                //io.sockets.emit('deconnexion_joueur');
                 io.sockets.emit('scores', scores);
-            }else if(Object.keys(pseudos).length==0){
-                clearInterval(timer);
-                for(i=2;i<11;i++){
-                    countdown[i]=30;
-                }
+            }
+            if(Object.keys(pseudos).length==0){
                 numeroQuestion=1;
-                idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);//fonction définie plus bas
+                idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);
             }
         });
 
@@ -82,7 +46,6 @@ MongoClient.connect(url, function(err, db) {
             io.sockets.emit('scores', scores);
 
             if(Object.keys(pseudos).length==2 && numeroQuestion==1){//Object.keys(quesArr).length : taille tableau associatif
-                countdown[1]=36;
                 io.sockets.emit('decompte_debut_partie');
             }else if(Object.keys(pseudos).length>2){
                 socket.emit('parti_deja_commence');
@@ -95,10 +58,27 @@ MongoClient.connect(url, function(err, db) {
         });
 
         socket.on('debut_partie', function(){
+            socket.emit("decompte");
             //Cherche la question dans la base de données
             findQuestion(db, idsQuestions[numeroQuestion], function(resultat) {//requete pour la question
-                io.sockets.emit('question', "Question : "+numeroQuestion+"/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
+                io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
             });
+        });
+
+        socket.on('question_suivante', function(id_question){
+            io.sockets.emit('scores', scores);
+            //Tester nombre de question pour savoir si la partie est finie
+            numeroQuestion=id_question+1;
+            if(numeroQuestion<11){
+                socket.emit("decompte");
+                findQuestion(db, idsQuestions[numeroQuestion],function(resultat) {//requete pour la question
+                    io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
+                });
+            //Afficher le gagnant
+            }else{
+                var vainqueur = chercherVainqueur(scores);//fonction chercherVainqueur définie plus bas
+                io.sockets.emit('vainqueur', vainqueur);
+            }
         });
 
         socket.on('reponse', function (reponse) {
@@ -114,13 +94,12 @@ MongoClient.connect(url, function(err, db) {
                     //secondsToReset=10;
                     io.sockets.emit('bonne_reponse', pseudo);
                     scores[socket.id+";"+pseudo]+=5;
-                    countdown[numeroQuestion]=0; 
-                    numeroQuestion++;
                     io.sockets.emit('scores', scores);
+                    numeroQuestion++;
                     //Tester nombre de question pour savoir si la partie est finie
                     if(numeroQuestion<11){
                         findQuestion(db, idsQuestions[numeroQuestion],function(resultat) {//requete pour la question
-                            io.sockets.emit('question', "Question : "+numeroQuestion+"/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
+                            io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
                         });
                     //Afficher le gagnant
                     }else{
