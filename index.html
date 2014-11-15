@@ -99,6 +99,8 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             $(document).ready(function(){
+                var temps_decompte = 15 ;
+
                 //Socket IO
                 var socket = io.connect('http://localhost:8080');
 
@@ -136,14 +138,14 @@
                 });
 
                 socket.on('decompte', function(){
-                    var cpt = 2 ;
+                    temps_decompte = 15 ;
                     var x ;
                     var id_question_envoye = false;
                     function decompte()
                     {
-                        if(cpt>=0){
-                            $("#decompte").html("<h1>"+cpt+"</h1>");
-                            cpt-- ;
+                        if(temps_decompte>=0){
+                            $("#decompte").html("<h1>"+temps_decompte+"</h1>");
+                            temps_decompte-- ;
                             x = setTimeout(decompte,1000) ;
                         }
                         else{
@@ -184,6 +186,7 @@
                 })
 
                 socket.on('bonne_reponse', function(pseudo){
+                    temps_decompte = 15;
                     $("#reponsesproposees").html("");
                     $("#gagnants").html(pseudo+" a trouvé la bonne réponse. <br />");
                 });
