@@ -1,6 +1,7 @@
 {
   "name": "quizz-node",
   "version": "1.0.0",
+  "subdomain": "node_quizz",
   "description": "Quizz node.js",
   "main": "app.js",
   "scripts": {
@@ -20,4 +21,3 @@
     "url": "https://github.com/matthieubart/node_quizz"
   }
 }
-

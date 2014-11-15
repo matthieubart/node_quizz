@@ -18,7 +18,7 @@ var idsQuestions = genererIdsQuestions(1,NB_QUESTIONS_BASE);//fonction définie 
 
 var countdown = {};
 for(i=1;i<11;i++){
-    countdown[i]=3;
+    countdown[i]=30;
 }
 
 //Connexion MongoDB
