@@ -2,7 +2,7 @@ $(document).ready(function(){
     var temps_decompte = 15 ;
 
     //Socket IO
-    var socket = io.connect('http://localhost:8080');
+    var socket = io.connect();
 
     socket.on("error", function(message){
         alert("Le serveur s'est arrété");

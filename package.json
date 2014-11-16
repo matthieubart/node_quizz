@@ -1,6 +1,6 @@
 {
   "name": "quizz-node",
-  "version": "1.0.0-6",
+  "version": "1.0.0-17",
   "subdomain": "node_quizz_matthieu",
   "description": "Quizz node.js",
   "dependencies": {
