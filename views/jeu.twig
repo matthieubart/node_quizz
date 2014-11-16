@@ -1,0 +1,60 @@
+{#Voir index.html#}
+{% extends "./index.html" %}
+
+{# Title #}
+{% block title %}Jeu{% endblock %}
+
+{# Head #}
+{% block head %}
+{{ parent() }}
+
+{% endblock %}
+
+{#Content #}
+{% block contenu %}
+    <div id="connexion">
+        <form action="/" method="post" id="formulaire_connexion">
+            <input type="text" name="pseudonyme" id="pseudonyme" placeholder="Votre pseudonyme..." size="50" autofocus />
+            <input type="submit" id="envoi_pseudonyme" value="Envoyer" />
+        </form>
+
+        <a href="/resultats/questions">Resultats questions</a><br />
+        <a href="/resultats/scores">Resultats scores</a>
+    </div>
+
+    <div id="quizz">
+        <section id="attente">
+            
+        </section>
+
+        <section id="questions">
+            
+        </section>
+        <section id="infos">
+            <div id="decompte">
+                
+            </div>
+            <div id="reponsesproposees">
+                
+            </div>
+
+            <div id="gagnants">
+                
+            </div>
+            <div id="scores">
+                
+            </div>
+        </section>
+
+        <form action="/" method="post" id="formulaire_reponse">
+            <input type="text" name="reponse" id="reponse" placeholder="Votre réponse..." size="50" autofocus />
+            <input type="submit" id="envoi_reponse" value="Envoyer" />
+        </form>
+    </div>
+{% endblock %}
+ 
+{% block script %}
+    {{ parent() }}
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/front.js"></script>
+{% endblock %}

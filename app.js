@@ -1,11 +1,15 @@
 var config = require('./config'),//Fichier de config config.js
     twig = require("twig"),
+    express = require('express'),
     app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     ent = require('ent'), // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
     fs = require('fs'), 
     MongoClient = require('mongodb').MongoClient;
+
+//Fichier en front : dans le repertoire public, puis css ou js
+app.use(express.static(__dirname + '/public'));
 
 const NB_QUESTIONS_BASE = 843;
 
@@ -25,7 +29,7 @@ var rejoindreLeJeu = true;
 
 //Jeu : Matthieu
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+    res.render("jeu.twig");
 });
 
 //Résultats : Romain
@@ -284,17 +288,3 @@ function chercherVainqueur(scores){
     }
     return vainqueurId;
 }
-
-//Supprimé les caractère spéciaux, les espaces et tous mettre en minuscule
-/*function verifierReponse(reponse){
-
-}*/
-
-/*
-MongoClient.connect(url, function(err, db) {
-    findQuestion(db, 1,function(resultat) {
-        console.log(resultat);
-        db.close();
-    });
-});
-*/

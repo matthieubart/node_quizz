@@ -2,13 +2,15 @@
 <html>
     <head>
         {% block head %}
+            <meta charset="utf-8" />
             <title>Node Quizz | {% block title %}{% endblock %}</title>
+            <link href="/css/main.css" rel="stylesheet" media="all"> 
         {% endblock %}
     </head>
     <body>
         {% block contenu %}{% endblock %}
         {% block script %}
-        <!--<script src="/socket.io/socket.io.js"></script>-->
+            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         {% endblock %}
     </body>
 </html>
