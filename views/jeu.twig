@@ -12,49 +12,48 @@
 
 {#Content #}
 {% block contenu %}
-    <div id="connexion">
-        <form action="/" method="post" id="formulaire_connexion">
-            <input type="text" name="pseudonyme" id="pseudonyme" placeholder="Votre pseudonyme..." size="50" autofocus />
-            <input type="submit" id="envoi_pseudonyme" value="Envoyer" />
-        </form>
+<div id="connexion">
+<form action="/" method="post" id="formulaire_connexion">
+<label for="pseudonyme">Entrez votre pseudo :</label>
+<input type="text" name="pseudonyme" id="pseudonyme" placeholder="Votre pseudonyme..." size="50" autofocus />
+<input type="submit" id="envoi_pseudonyme" value="Lancer la partie" />
+</form>
+</div>
 
-        <a href="/resultats/questions">Resultats questions</a><br />
-        <a href="/resultats/scores">Resultats scores</a>
-    </div>
+<div id="quizz">
+<section id="attente">
 
-    <div id="quizz">
-        <section id="attente">
-            
-        </section>
+</section>
 
-        <section id="questions">
-            
-        </section>
-        <section id="infos">
-            <div id="decompte">
-                
-            </div>
-            <div id="reponsesproposees">
-                
-            </div>
+<section id="questions">
 
-            <div id="gagnants">
-                
-            </div>
-            <div id="scores">
-                
-            </div>
-        </section>
+</section>
 
-        <form action="/" method="post" id="formulaire_reponse">
-            <input type="text" name="reponse" id="reponse" placeholder="Votre réponse..." size="50" autofocus />
-            <input type="submit" id="envoi_reponse" value="Envoyer" />
-        </form>
-    </div>
+<form action="/" method="post" id="formulaire_reponse">
+<input type="text" name="reponse" id="reponse" placeholder="Votre réponse..." size="50" autofocus />
+<input type="submit" id="envoi_reponse" value="Envoyer" />
+</form>
+<section id="infos">
+<div id="decompte">
+
+</div>
+<div id="reponsesproposees">
+
+</div>
+
+<div id="gagnants">
+
+</div>
+<div id="scores">
+
+</div>
+<div class="clearer">&nbsp;</div>
+</section>
+</div>
 {% endblock %}
- 
+
 {% block script %}
-    {{ parent() }}
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/front.js"></script>
+{{ parent() }}
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/front.js"></script>
 {% endblock %}

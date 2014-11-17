@@ -1,48 +1,262 @@
-*{
+/* ==============================================
+   FEUILLE DE STYLES DES GABARITS HTML/CSS --- 01
+   © Elephorm & Alsacreations.com
+   Conditions d'utilisation:
+   http://creativecommons.org/licenses/by/2.0/fr/
+   ============================================== */
+
+   /* --- COULEURS --- */
+
+   /* Général */
+   html{
+    min-width: 800px;
+}
+body {
+    color: #F0E39E;
+    background: #181A12; /* Voir -> Note 1 ci-dessous */
+    width: 800px;
+    margin-left: -400px;
+    position: relative;
+    left: 50%;
+}
+a {
+    color: #FF6533;
+}
+a:hover, a:focus {
+    color: #FF4C00;
+}
+strong {
+    color: #A1B55D;
+}
+
+/* En-tête */
+#entete {
+    background: #2C2F22;
+}
+
+/* Navigation */
+#navigation {
+    background: #181A12;
+}
+#navigation a {
+    color: #FF6533;
+}
+#navigation a:hover, #navigation a:focus {
+    background: #000000;
+}
+
+/* Contenu principal */
+#contenu {
+    color: #363B29;
+    background: #cbd888;
+}
+#contenu a {
+    color: #332510;
+}
+#contenu a:hover, #contenu a:focus {
+    color: #6E5122;
+}
+#contenu strong {
+    color: #181A12;
+}
+
+/* Pied de page */
+#pied {
+    color: #E6A948;
+}
+
+
+/* --- POSITIONNEMENT --- */
+
+/* Page */
+body {
+    padding: 0; /* -> 2 */
+}
+
+/* En-tête */
+#entete {
+    padding: 15px 20px 10px 20px;
+}
+#entete h1 {
+    margin: 0;
+}
+#entete h1 img {
+    float: left;
+    margin: 7px 20px 10px 0;
+}
+#entete .sous-titre {
+    margin: 4px 0 15px 0;
+}
+
+/* Menu de navigation */
+#navigation {
+    padding: 12px 15px;
+}
+#navigation ul {
     margin: 0;
     padding: 0;
+    list-style: none;
+}
+#navigation li {
+    display: inline; /* -> 3 */
+}
+#navigation a {
+    padding: 6px;
+    line-height: 1.5;
+    font-size: .9em;
+    text-decoration: none;
 }
 
-h1{
-    text-align: center;
+/* Contenu */
+#contenu {
+    padding: 20px;
+}
+#contenu > :first-child {
+    margin-top: 10px;
+}
+#contenu p, #contenu li {
+    line-height: 1.5;
 }
 
-#quizz,#connexion{
-    display: none;
+/* Pied de page */
+#pied {
+    padding: 15px 20px;
+    font-size: .85em;
+}
+#pied p {
+    margin: .5em 0;
+}
+#pied #copyright {
+    float: right;
+    margin: .5em 0 30px 10%;
+    font-size: 1em;
 }
 
-#connexion, #questions{
-    position: absolute;
-    bottom: 50%;
+/*Connexion*/
+#connexion #formulaire_connexion{
+    padding: 20px;
+}
+#connexion label{
+    font-size: 1.2rem ;
+    display: block;
+}
+#connexion input{
+    font-size: 1.2rem ;
+    display: block;
+    margin: 20px 0;
+    border: none;
+    color: #2C2F22;
+}
+#connexion input#pseudonyme{
     width: 100%;
+    margin: 20px 0;
+    padding: 3px;
+}
+#connexion input[type="submit"]{
+    width: 250px;
+    padding: 10px 0;
+    text-align: center;
+    margin:auto;
+    color: #cbd888;
+    background:#181a12 ;
+}
+#connexion input[type="submit"]:hover {
+    color: white;
+    background:#000000 ;
+}
+
+/*QUIZZ*/
+
+/*Attente*/
+#attente{
+    font-size: 1.5rem;
+    display: block;
+    padding: 50px 0;
     text-align: center;
 }
+/*infos*/
+#infos {
+    background: #2c2f22;
 
-#formulaire_reponse{
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    bottom: 0;
 }
-
-#gagnants, #reponsesproposees{
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    top: 90%;
+#infos #decompte{
+    float: left;
+    width: 10%;
 }
-
-#gagnants{
-    left: 10%;
-}
-
-#reponsesproposees{
-    right: 10%;
+#infos #decompte h1{
+    margin: 5px 20px;
+    color: white;
 }
 
 #scores{
-    border: 3px solid black;
-    padding: 5px;
-    position: absolute;
-    right: 0;
+    width: 15%;
+    border-left: 1px black solid;
+    padding: 20px;
+    float: right;
+    color: white;
 }
+#scores strong{
+    color: white;
+}
+/*questions*/
+#questions{
+    font-size: 1.5rem;
+    display: block;
+    padding: 50px 0;
+}
+#questions span{
+    font-weight: bold;
+}
+
+/*Reponse*/
+#formulaire_reponse input{
+    font-size: 1.2rem ;
+    display: block;
+    margin: 20px 0;
+    border: none;
+    color: #2C2F22;
+}
+#formulaire_reponse input#reponse{
+    width: 100%;
+    margin: 20px 0;
+    padding: 3px;
+}
+#formulaire_reponse input[type="submit"]{
+    width: 250px;
+    padding: 10px 0;
+    text-align: center;
+    margin: 0 auto 20px;
+    color: #cbd888;
+    background:#181a12 ;
+}
+#formulaire_reponse input[type="submit"]:hover {
+    color: white;
+    background:#000000 ;
+}
+#reponsesproposees{
+    color: white;
+    padding: 5px;
+    float: left;
+    width: 32%;
+    word-wrap: break-word;
+}
+#gagnants{
+    display: inline-block;
+    color: #FF6533;
+    font-weight: bold;
+    padding: 5px;
+}
+/*Représentation de donnéés*/
+#svg .text {
+    cursor: pointer; cursor: hand;
+}
+/*couleurs*/
+.YlOrRd .q0-9{fill:rgb(255,255,204)}
+.YlOrRd .q1-9{fill:rgb(255,237,160)}
+.YlOrRd .q2-9{fill:rgb(254,217,118)}
+.YlOrRd .q3-9{fill:rgb(254,178,76)}
+.YlOrRd .q4-9{fill:rgb(253,141,60)}
+.YlOrRd .q5-9{fill:rgb(252,78,42)}
+.YlOrRd .q6-9{fill:rgb(227,26,28)}
+.YlOrRd .q7-9{fill:rgb(189,0,38)}
+.YlOrRd .q8-9{fill:rgb(128,0,38)}

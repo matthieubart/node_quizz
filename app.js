@@ -1,9 +1,9 @@
 var config = require('./config'),//Fichier de config config.js
-    twig = require("twig"),
-    express = require('express'),
-    app = require('express')(),
-    server = require('http').createServer(app),
-    io = require('socket.io').listen(server),
+twig = require("twig"),
+express = require('express'),
+app = require('express')(),
+server = require('http').createServer(app),
+io = require('socket.io').listen(server),
     ent = require('ent'), // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
     fs = require('fs'), 
     MongoClient = require('mongodb').MongoClient;
@@ -36,11 +36,39 @@ app.get('/', function (req, res) {
 app.get('/resultats/scores', function(req, res){
     MongoClient.connect(url, function(err, db) {
         findScores(db, function(scores) {
-            res.render("resultats_scores.twig", {scores:scores});
+            var results = [];
+            var index = 0;
+            for (var i = 0; i < scores.length; i++) {
+                var alreadyExist = -1;
+                for(var j = 0; j < results.length; j++){
+                    if(results[j][0] == scores[i]["pseudo"]){
+                        alreadyExist = j;
+                        break;
+                    }
+                }
+                if(alreadyExist == -1){
+                    alreadyExist = index;
+                    //pseudo
+                    results[alreadyExist] = [];
+                    results[alreadyExist][0] = scores[i]['pseudo'];
+                    results[alreadyExist][1] = 0;
+                    results[alreadyExist][2] = 0;
+                    results[alreadyExist][3] = 0;
+                    index++;
+                } else{
+                    results[alreadyExist][1]  += scores[i]["score"] ;
+                    if(scores[i]["partie_finie"]){
+                        results[alreadyExist][2]++;
+                    }
+                    results[alreadyExist][3]++;
+                }
+            };
+            res.render("resultats_scores.twig", {donnees:results});
             db.close();
         });
-    });
 });
+});
+
 
 
 app.get('/resultats/questions', function(req, res){
@@ -126,7 +154,7 @@ MongoClient.connect(url, function(err, db) {
                     io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
                 });
             //Afficher le gagnant
-            }else{
+        }else{
                 var vainqueur = chercherVainqueur(scores);//fonction chercherVainqueur définie plus bas
                 io.sockets.emit('vainqueur', vainqueur);
             }
@@ -138,10 +166,10 @@ MongoClient.connect(url, function(err, db) {
                 if(reponse.isNumber()){
                     bonneReponse = resultat.reponse;
                 }else{//On n'applique pas la fonction encode
-                    reponse = ent.encode(reponse).trim();
-                    bonneReponse = ent.encode(resultat.reponse).trim();
-                }
-                if(reponse==bonneReponse && reponse != ""){
+                reponse = ent.encode(reponse).trim();
+                bonneReponse = ent.encode(resultat.reponse).trim();
+            }
+            if(reponse==bonneReponse && reponse != ""){
                     //secondsToReset=10;
                     io.sockets.emit('bonne_reponse', pseudo);
                     scores[socket.id+";"+pseudo]+=5;
@@ -153,7 +181,7 @@ MongoClient.connect(url, function(err, db) {
                             io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
                         });
                     //Afficher le gagnant
-                    }else{
+                }else{
                         var vainqueur = chercherVainqueur(scores);//fonction chercherVainqueur définie plus bas
                         io.sockets.emit('vainqueur', vainqueur);
                     }
@@ -163,8 +191,8 @@ MongoClient.connect(url, function(err, db) {
                     socket.emit('mauvaise_reponse', reponse);
                 }
             });
-        }); 
-    });
+}); 
+});
 
 });
 
@@ -238,7 +266,7 @@ var insertScoreJoueur = function(db, pseudo, score, partieFinie){
         scoreAInserer = {pseudo:pseudo,score:score, partie_finie:false};
     }
     collection.insert(scoreAInserer, function(err, records) {
-            console.log("Enregistré "+records[0]._id);
+        console.log("Enregistré "+records[0]._id);
     }); 
 } 
 
@@ -273,18 +301,18 @@ function chercherVainqueur(scores){
         vainqueurId = vainqueurId.split(";");
         vainqueurId = vainqueurId[1];
     //Egalité
-    }else if(tableauScores[0]==tableauScores[1]){
-        vainqueurId = "egalite";
+}else if(tableauScores[0]==tableauScores[1]){
+    vainqueurId = "egalite";
     //Si il n'y a qu'un joueur
-    }else if(tableauScores.length==1){
-        vainqueurId = tableauPseudos[0];
-        vainqueurId = vainqueurId.split(";");
-        vainqueurId = vainqueurId[1];
+}else if(tableauScores.length==1){
+    vainqueurId = tableauPseudos[0];
+    vainqueurId = vainqueurId.split(";");
+    vainqueurId = vainqueurId[1];
     //Vainqueur : Joueur 2
-    }else{
-        vainqueurId = tableauPseudos[1];
-        vainqueurId = vainqueurId.split(";");
-        vainqueurId = vainqueurId[1];
-    }
-    return vainqueurId;
+}else{
+    vainqueurId = tableauPseudos[1];
+    vainqueurId = vainqueurId.split(";");
+    vainqueurId = vainqueurId[1];
+}
+return vainqueurId;
 }

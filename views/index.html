@@ -1,16 +1,35 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        {% block head %}
-            <meta charset="utf-8" />
-            <title>Node Quizz | {% block title %}{% endblock %}</title>
-            <link href="/css/main.css" rel="stylesheet" media="all"> 
-        {% endblock %}
-    </head>
-    <body>
+<head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <title>Node Quizz | {% block title %}{% endblock %}</title>
+    <link href="/css/base.css" rel="stylesheet" media="all"> 
+    <link href="/css/main.css" rel="stylesheet" media="all"> 
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <div id="entete">
+            <h1>MégaQuizz</h1>
+            <h2 class="sous-titre">Le Jeu de quizz</h2>
+        </div>
+        <div id="navigation">  
+            <ul>
+                <li><a href="/">Lancer une partie</a></li>
+                <li><a href="/resultats/scores">Plus gros joueurs</a></li>
+                <!--<li><a href="/resultats/questions">Statistiques des questions</a></li>-->
+            </ul>
+        </div>
+    </header>
+    <div id="contenu">
         {% block contenu %}{% endblock %}
+    </div>
+    <footer id="pied">
+        <p id="copyright">Site réalisé par Matthieu et Romain / M2 DNR2I</p>
         {% block script %}
-            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         {% endblock %}
-    </body>
+    </footer>
+</body>
 </html>
