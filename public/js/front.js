@@ -14,6 +14,12 @@ $(document).ready(function(){
         $("#formulaire_reponse").css("display", "none");
     });
 
+    socket.on('trop_de_joueurs', function() {
+        $("html").html("");
+        alert("La partie est déjà commencé.");
+        window.location.reload();
+    });
+
     socket.on('decompte_debut_partie', function(){
         $("#attente").html("");
         $("#formulaire_reponse").css("display", "none");
@@ -63,19 +69,17 @@ $(document).ready(function(){
 
     });
 
-    socket.on('decompte', function (data) {
-        $('#decompte').html("<h1>"+data.countdown+"</h1>");
-    });
-
     socket.on('parti_deja_commence', function(){
+        $("html").html("");
         window.location.reload();
     });
 
     socket.on('question', function(question) {
         $("#formulaire_reponse").css("display", "block");
         $("#attente").html("");
-        $("#questions").html(question);
-    })
+        $("#questions").html(question.question);
+        console.log(question.reponse);
+    });
 
     socket.on('bonne_reponse', function(pseudo){
         temps_decompte = 15;
@@ -94,6 +98,7 @@ $(document).ready(function(){
         }else{
             message = "Le vainqueur est "+vainqueur;
         }
+        $("html").html("");
         alert(message);
         window.location.reload();
     });

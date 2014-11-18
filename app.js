@@ -150,6 +150,9 @@ MongoClient.connect(url, function(err, db) {
                 delete scores[socket.id+";"+pseudo];
                 delete pseudos[socket.id];
                 io.sockets.emit('scores', scores);
+            }else if(/*Object.keys(pseudos).length==2 &&*/ numeroQuestion>1){
+                console.log("test");
+                socket.emit('trop_de_joueurs');
             }else{
                 socket.emit('attente');
             }
@@ -164,7 +167,7 @@ MongoClient.connect(url, function(err, db) {
             socket.emit("decompte");
             //Cherche la question dans la base de données
             findQuestion(db, idsQuestions[numeroQuestion], function(resultat) {//requete pour la question
-                io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
+                io.sockets.emit('question', {intitule:"Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? ",reponse:resultat.reponse});//cacher la réponse une fois fini et l'id
             });
         });
 
@@ -175,7 +178,7 @@ MongoClient.connect(url, function(err, db) {
             if(numeroQuestion<11){
                 socket.emit("decompte");
                 findQuestion(db, idsQuestions[numeroQuestion],function(resultat) {//requete pour la question
-                    io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
+                    io.sockets.emit('question', {intitule:"Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? ",reponse:resultat.reponse});//cacher la réponse une fois fini et l'id
                 });
             //Afficher le gagnant
         }else{
@@ -202,7 +205,7 @@ MongoClient.connect(url, function(err, db) {
                     //Tester nombre de question pour savoir si la partie est finie
                     if(numeroQuestion<11){
                         findQuestion(db, idsQuestions[numeroQuestion],function(resultat) {//requete pour la question
-                            io.sockets.emit('question', "Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? "+resultat.reponse+"."+resultat.id_questions);//cacher la réponse une fois fini et l'id
+                            io.sockets.emit('question', {intitule:"Question : <span>"+numeroQuestion+"</span>/10 : "+resultat.intitule+" ? ",reponse:resultat.reponse});//cacher la réponse une fois fini et l'id
                         });
                     //Afficher le gagnant
                 }else{
