@@ -1,0 +1,46 @@
+{% extends "./index.html" %}
+{# Title #}
+{% block title %}Résultats Général{% endblock %}
+
+{# Head #}
+{% block head %}
+{{ parent() }}
+
+{% endblock %}
+
+{#Content #}
+{% block contenu %}
+<h2>Parties jouées et score total de chaque joueur</h2>
+<script src="/js/lib/d3.v3.min.js" type="text/javascript"></script>
+<script src="/js/bar.js" type="text/javascript"></script>
+<script>
+	var donnees = [];
+	{% for value in donnees %}
+		donnees[{{loop.index0}}] = [];
+		donnees[{{loop.index0}}][0] = "{% if value[0] is empty%}anonyme{%else%}{{value[0]}}{% endif %}";
+		donnees[{{loop.index0}}][1] = {{value[1]}};
+		donnees[{{loop.index0}}][2] = {{value[3]}};
+	{%endfor%}
+	{#var tampon = ["TOTAL", 0, 0, 0];
+	{% for value in donnees %}
+		tampon[1] += {{value[1]}};
+		tampon[2] += {{value[3]}};
+	{%endfor%}
+	donnees[donnees.length] = tampon;#}
+	dessiner(donnees); 
+</script>
+<style>
+ .clair{
+ 	fill: rgb(225, 200, 225);
+ }
+  .mclair{
+ 	fill: rgb(175, 150, 175);
+ }
+  .mfonce{
+ 	fill: rgb(105, 75, 105);
+ }
+  .fonce{
+ 	fill: rgb(50, 40, 50);
+ }
+</style>
+{% endblock %}

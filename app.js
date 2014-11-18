@@ -69,18 +69,42 @@ app.get('/resultats/scores', function(req, res){
 });
 });
 
-
-
-app.get('/resultats/questions', function(req, res){
+app.get('/resultats/general', function(req, res){
     MongoClient.connect(url, function(err, db) {
-        findIdsQuestions(db, function(questions_ids) {
-            findIntulesQuestions(db, questions_ids, function(questions_posees){
-                res.render("resultats_questions.twig", {questions_posees:questions_posees});
-                db.close();
-            });
+        findScores(db, function(scores) {
+            var results = [];
+            var index = 0;
+            for (var i = 0; i < scores.length; i++) {
+                var alreadyExist = -1;
+                for(var j = 0; j < results.length; j++){
+                    if(results[j][0] == scores[i]["pseudo"]){
+                        alreadyExist = j;
+                        break;
+                    }
+                }
+                if(alreadyExist == -1){
+                    alreadyExist = index;
+                    //pseudo
+                    results[alreadyExist] = [];
+                    results[alreadyExist][0] = scores[i]['pseudo'];
+                    results[alreadyExist][1] = 0;
+                    results[alreadyExist][2] = 0;
+                    results[alreadyExist][3] = 0;
+                    index++;
+                } else{
+                    results[alreadyExist][1]  += scores[i]["score"] ;
+                    if(scores[i]["partie_finie"]){
+                        results[alreadyExist][2]++;
+                    }
+                    results[alreadyExist][3]++;
+                }
+            };
+            res.render("resultats_general.twig", {donnees:results});
+            db.close();
         });
     });
 });
+
 
 //////
 //JEU
